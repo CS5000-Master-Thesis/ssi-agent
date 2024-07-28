@@ -34,11 +34,7 @@ pub fn create_credentials_supported() -> ServerConfigCommand {
     let server_config = config!("server_config", ServerConfig)
         .expect("Failed due to missing `server_config` in `issuance-config.yml` file");
 
-    let credential_configuration = server_config
-        .credential_configurations
-        .first()
-        .expect("Failed due to empty `credential_configurations` array in `issuance-config.yml` file")
-        .clone();
+    let credential_configuration = server_config.credential_configurations.clone();
 
     ServerConfigCommand::AddCredentialConfiguration {
         credential_configuration,

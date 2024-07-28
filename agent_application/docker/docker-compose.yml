@@ -27,10 +27,10 @@ services:
     depends_on:
       - cqrs-postgres-db
   ssi-agent:
-    #image: ssi-agent
-    build:
-      context: ../..
-      dockerfile: ./agent_application/docker/Dockerfile
+    image: ssi-agent_kobey
+    # build:
+    #   context: ../..
+    #   dockerfile: ./agent_application/docker/Dockerfile
     ports:
       - 3033:3033
     environment:
@@ -43,7 +43,7 @@ services:
 
       AGENT_CONFIG_STRONGHOLD_PASSWORD: "VNvRtH4tKyWwvJDpL6Vuc2aoLiKAecGQ"
       AGENT_CONFIG_ISSUER_KEY_ID: "UVDxWhG2rB39FkaR7I27mHeUNrGtUgcr"
-      
+
       # Uncomment the following lines to use the DID method `did:iota:rms`
       # AGENT_CONFIG_ISSUER_DID: "did:iota:rms:0x42ad588322e58b3c07aa39e4948d021ee17ecb5747915e9e1f35f028d7ecaf90"
       # AGENT_CONFIG_ISSUER_FRAGMENT: "bQKQRzaop7CgEvqVq8UlgLGsdF-R-hnLFkKFZqW2VN0"
@@ -54,6 +54,7 @@ services:
       - ../../agent_event_publisher_http/config.yml:/app/agent_event_publisher_http/config.yml
       - ../../agent_verification/presentation_definitions:/app/agent_verification/presentation_definitions
       - ../../agent_issuance/issuance-config.yml:/app/agent_issuance/issuance-config.yml
+      - ./.well-known/did-configuration.json:/app/.well-known/did-configuration.json
       # TODO: Remove this. This is a workaround that ensures that the `agent_verification/presentation_definitions`
       # folder can be accessed by the agent from the `fn authorization_requests` endpoint.
       - ./tmp:/app/agent_api_rest

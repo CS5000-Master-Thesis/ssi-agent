@@ -21,7 +21,7 @@ use issuance::credential_issuer::{
 };
 use issuance::credentials::{credentials, get_credentials};
 use issuance::offers::offers;
-use tower_http::trace::TraceLayer;
+use tower_http::{services::ServeDir, trace::TraceLayer};
 use tracing::{info_span, Span};
 use verification::{
     authorization_requests::{authorization_requests, get_authorization_requests},
@@ -72,6 +72,8 @@ pub fn app(state: ApplicationState) -> Router {
         // SIOPv2
         .route(&path("/request/:request_id"), get(request))
         .route(&path("/redirect"), post(redirect))
+        // Static file server
+        .nest_service("/.well-known", ServeDir::new(".well-known"))
         // Trace layer
         .layer(
             TraceLayer::new_for_http()

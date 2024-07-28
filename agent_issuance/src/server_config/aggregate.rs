@@ -58,6 +58,8 @@ impl Aggregate for ServerConfig {
             AddCredentialConfiguration {
                 credential_configuration,
             } => {
+                let mut credential_configurations = HashMap::new();
+
                 let cryptographic_binding_methods_supported =
                     config!("subject_syntax_types_supported", Vec<String>).unwrap_or_default();
 
@@ -72,19 +74,20 @@ impl Aggregate for ServerConfig {
                     },
                 )]);
 
-                let credential_configuration_object = CredentialConfigurationsSupportedObject {
-                    credential_format: credential_configuration.credential_format_with_parameters,
-                    cryptographic_binding_methods_supported,
-                    credential_signing_alg_values_supported,
-                    proof_types_supported,
-                    display: credential_configuration.display,
-                    ..Default::default()
-                };
+                for cred_config in credential_configuration {
+                    let credential_configuration_object = CredentialConfigurationsSupportedObject {
+                        credential_format: cred_config.credential_format_with_parameters,
+                        cryptographic_binding_methods_supported: cryptographic_binding_methods_supported.clone(),
+                        credential_signing_alg_values_supported: credential_signing_alg_values_supported.clone(),
+                        proof_types_supported: proof_types_supported.clone(),
+                        display: cred_config.display,
+                        ..Default::default()
+                    };
 
-                let credential_configurations = HashMap::from_iter([(
-                    credential_configuration.credential_configuration_id,
-                    credential_configuration_object,
-                )]);
+                    credential_configurations
+                        .insert(cred_config.credential_configuration_id, credential_configuration_object);
+                }
+
                 // TODO: Uncomment this once we support Batch credentials.
                 // let mut credential_configurations = self
                 //     .credential_issuer_metadata
@@ -163,7 +166,7 @@ pub mod server_config_tests {
                 credential_issuer_metadata: CREDENTIAL_ISSUER_METADATA.clone(),
             }])
             .when(ServerConfigCommand::AddCredentialConfiguration {
-                credential_configuration: CredentialConfiguration {
+                credential_configuration: vec![CredentialConfiguration {
                     credential_configuration_id: "0".to_string(),
                     credential_format_with_parameters: CredentialFormats::JwtVcJson(Parameters::<JwtVcJson> {
                         parameters: w3c_verifiable_credentials::jwt_vc_json::JwtVcJsonParameters {
@@ -175,7 +178,7 @@ pub mod server_config_tests {
                         },
                     }),
                     display: vec![],
-                },
+                }],
             })
             .then_expect_events(vec![ServerConfigEvent::CredentialConfigurationAdded {
                 credential_configurations: CREDENTIAL_CONFIGURATIONS_SUPPORTED.clone(),

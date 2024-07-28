@@ -12,6 +12,6 @@ pub enum ServerConfigCommand {
         credential_issuer_metadata: CredentialIssuerMetadata,
     },
     AddCredentialConfiguration {
-        credential_configuration: CredentialConfiguration,
+        credential_configuration: Vec<CredentialConfiguration>,
     },
 }

@@ -1,13 +1,37 @@
 server_config:
   credential_configurations:
-    - credential_configuration_id: w3c_vc_credential
+    - credential_configuration_id: w3c_vc_credential_1
       format: jwt_vc_json
       credential_definition:
         type:
           - VerifiableCredential
       display:
-        - name: Verifiable Credential
+        - name: Verifiable Credential 1
           locale: en
           logo:
             url: https://impierce.com/images/logo-blue.png
-            alt_text: UniCore Logo
+            alt_text: UniCore Logo 1
+
+    - credential_configuration_id: w3c_vc_credential_2
+      format: jwt_vc_json
+      credential_definition:
+        type:
+          - VerifiableCredential
+      display:
+        - name: Verifiable Credential 2
+          locale: en
+          logo:
+            url: https://impierce.com/images/logo-blue.png
+            alt_text: UniCore Logo 2
+
+    - credential_configuration_id: w3c_vc_credential_3
+      format: jwt_vc_json
+      credential_definition:
+        type:
+          - VerifiableCredential
+      display:
+        - name: Verifiable Credential 3
+          locale: en
+          logo:
+            url: https://impierce.com/images/logo-blue.png
+            alt_text: UniCore Logo 3
