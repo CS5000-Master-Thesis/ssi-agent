@@ -75,13 +75,27 @@ impl Aggregate for Offer {
             }]),
             CreateFormUrlEncodedCredentialOffer {
                 offer_id,
+                credential_types,
                 credential_issuer_metadata,
             } => {
                 // TODO: This needs to be fixed when we implement Batch credentials.
+                let mut extracted_keys = Vec::new();
                 let credentials_supported = credential_issuer_metadata.credential_configurations_supported.clone();
+
+                for cred_type in credential_types {
+                    if credentials_supported.contains_key(&cred_type) {
+                        extracted_keys.push(cred_type);
+                    } else {
+                        return Err(InvalidCredentialType(format!(
+                            "Type '{}' not found in the HashMap.",
+                            cred_type
+                        )));
+                    }
+                }
+
                 let credential_offer = CredentialOffer::CredentialOffer(Box::new(CredentialOfferParameters {
                     credential_issuer: credential_issuer_metadata.credential_issuer.clone(),
-                    credential_configuration_ids: credentials_supported.keys().cloned().collect(),
+                    credential_configuration_ids: extracted_keys,
                     grants: Some(Grants {
                         authorization_code: None,
                         pre_authorized_code: Some(PreAuthorizedCode {
@@ -313,6 +327,7 @@ pub mod tests {
             ])
             .when(OfferCommand::CreateFormUrlEncodedCredentialOffer {
                 offer_id: Default::default(),
+                credential_types: vec!["w3c_vc_credential_1".to_string()],
                 credential_issuer_metadata: CREDENTIAL_ISSUER_METADATA.clone(),
             })
             .then_expect_events(vec![OfferEvent::FormUrlEncodedCredentialOfferCreated {

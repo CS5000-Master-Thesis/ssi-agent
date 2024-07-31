@@ -23,6 +23,7 @@ pub enum OfferCommand {
     // TODO: add option for credential_offer_uri (by reference)
     CreateFormUrlEncodedCredentialOffer {
         offer_id: String,
+        credential_types: Vec<String>,
         credential_issuer_metadata: CredentialIssuerMetadata,
     },
     CreateTokenResponse {

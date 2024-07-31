@@ -18,13 +18,18 @@ use tracing::info;
 #[serde(rename_all = "camelCase")]
 pub struct OffersEndpointRequest {
     pub offer_id: String,
+    pub credential_types: Vec<String>,
 }
 
 #[axum_macros::debug_handler]
 pub(crate) async fn offers(State(state): State<IssuanceState>, Json(payload): Json<Value>) -> Response {
     info!("Request Body: {}", payload);
 
-    let Ok(OffersEndpointRequest { offer_id }) = serde_json::from_value(payload) else {
+    let Ok(OffersEndpointRequest {
+        offer_id,
+        credential_types,
+    }) = serde_json::from_value(payload)
+    else {
         return (StatusCode::BAD_REQUEST, "invalid payload").into_response();
     };
 
@@ -58,6 +63,7 @@ pub(crate) async fn offers(State(state): State<IssuanceState>, Json(payload): Js
 
     let command = OfferCommand::CreateFormUrlEncodedCredentialOffer {
         offer_id: offer_id.clone(),
+        credential_types: credential_types.clone(),
         credential_issuer_metadata,
     };
 
