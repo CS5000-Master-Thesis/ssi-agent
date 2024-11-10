@@ -20,6 +20,8 @@ serde.workspace = true
 serde_json = "1.0"
 tokio.workspace = true
 url.workspace = true
+p256 = { version = "0.13", features = ["jwk"] }
+
 
 [dev-dependencies]
 agent_shared = { path = "../agent_shared", features = ["test_utils"] }
